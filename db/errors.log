@@ -1,0 +1,19 @@
+
+
+20:24:04 error: null value in column "tweet_created_at" violates not-null constraint
+         tx: INSERT INTO tweets SELECT * FROM temptweets;
+
+20:24:04 error: current transaction is aborted, commands ignored until end of transaction block
+         tx: INSERT INTO hashtags SELECT * FROM temphashtags;
+
+20:24:04 error: current transaction is aborted, commands ignored until end of transaction block
+         tx: INSERT INTO hashtagmap SELECT * FROM temphashtagmap;
+
+20:28:15 error: value too long for type character varying(20)
+         tx: INSERT INTO tweets SELECT * FROM temptweets WHERE tweet_created_at IS NOT NULL AND tweet IS NOT NULL AND id IS NOT NULL AND userid IS NOT NULL;
+
+20:28:15 error: current transaction is aborted, commands ignored until end of transaction block
+         tx: INSERT INTO hashtags SELECT * FROM temphashtags;
+
+20:28:15 error: current transaction is aborted, commands ignored until end of transaction block
+         tx: INSERT INTO hashtagmap SELECT * FROM temphashtagmap;

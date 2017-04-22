@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Twitter - Data Mining Tool</title>
+    <meta name="description" content="Data Mining Tool for Twitter">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-slider.min.css">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap-slider.min.js"></script>
+    <!-- Twitter Widget -->
+    <script type="text/javascript" async src="https://platform.twitter.com/widgets.js"></script>
+    <!-- Moment.js -->
+    <script type="text/javascript" src="js/moment.min.js"></script>
+  </head>
+  
+  <body>
+    <%- include ../partials/modals.ejs %>
+    <div id="loading" class="loading">
+        <i class="fa fa-spinner fa-spin fa-fw"></i>
+    </div>
+    <div class="jumbotron">
+      <h1>Twitter - Data Mining Tool</h1> 
+    </div>
+    <div class="container">
+      <div class="row" id="alertContainer"></div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">Enter Location</div>
+            <div class="panel-body">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-12">
+                    <form id="eventQuery">
+                      <div class="form-group">
+                        <label for="query">Query</label>
+                        <input class="form-control" type="text" name="query" id="query" placeholder="Ex: puppies OR #puppy" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="lat">Latitude</label>
+                        <input class="form-control" type="text" name="lat" id="lat" placeholder="Latitude" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="lng">Longitude</label>
+                        <input class="form-control" type="text" name="lng" id="lng" placeholder="Longitude" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="radius">Radius (km)</label>
+                        <input class="form-control" type="number" name="radius" id="radius" placeholder="Ex: 10" required>
+                      </div>
+                      <div class="form-group">
+                         <label for="type">Tweet type:</label>
+                            <label class="radio-inline">
+                              <input type="radio" name="type" value="recent" checked>Recent 
+                            </label>
+                            <label class="radio-inline">
+                              <input type="radio" name="type" value="popular">Popular
+                            </label>
+                            <label class="radio-inline">
+                              <input type="radio" name="type" value="mixed">Mixed
+                            </label>
+                      </div>
+                      <div class="checkbox">
+                        <label class="checkbox-inline">
+                          <input type="checkbox" name="locate" value="true" checked> Use location?
+                        </label>
+                        <label class="checkbox-inline">
+                          <input type="checkbox" name="today" value="true"> Just today?
+                        </label>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <button class="btn btn-success btn-block" type="submit">Submit</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                  <div class="col-md-6">
+                    <button type="button" class="btn btn-primary btn-block" data-toggle="modal" data-target="#dataMining">
+                      Load CSV
+                    </button>
+                  </div>
+                  <div class="col-md-6">
+                    <button href="#" id="uploadDB" class="btn btn-info btn-block" role="button" data-toggle="modal" data-target="#uploadConfirmationModal">Temp Data <i class="fa fa-arrow-right" aria-hidden="true"></i> DB</button>
+                  </div>
+                </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">Map - Drag the marker to the location desired</div>
+          <div class="panel-body">
+          <div class="row">
+              <input id="radiusSlider" type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="30"/>
+            </div>
+            <div class="row"><div id='map' class="iframe-container"></div></div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div class="row">
+              <div class="col-md-2">
+                <h4>Output</h4>
+              </div>
+              <div class="col-md-2">
+                <button id="allsuccess" class="btn btn-success j-hidden"> All </button>
+                <button id="alldanger" class="btn btn-danger j-hidden"> All </button>
+                <button id="allunknown" class="btn btn-default j-hidden"> All </button>
+              </div>
+              <div class="col-md-2">
+                <button id="save2" class="save btn btn-block btn-primary j-hidden" data-toggle="tooltip" data-placement="bottom" title="Save tweets in the main DB">Save</button>
+              </div>
+
+              <div class="col-md-2">
+                <button id="htmls" class="btn btn-block btn-info j-hidden" data-toggle="tooltip" data-placement="bottom" title="Save HTML tags from each tweet listed below in DB. Save tweets first!">Get HTMLs</button>
+              </div>
+              
+              <div class="col-md-4">
+                <div class="text-right align-middle" id='status'></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-body" id="console">
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/api.js"></script>
+    <script src="js/maps.js"></script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJp4Xa0WsH_YxyBnw2eQy23hI7YAd8W8c&callback=initMap">
+    </script>
+  </body>
+</html>

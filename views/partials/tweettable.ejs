@@ -1,0 +1,52 @@
+<table id="tweets" class="table table-hover">
+  <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>User</th>
+      <th>Tweet</th>
+      <th>Hashtags</th>
+      <th>Coordinates</th>
+      <th>Favorited/Retweeted</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% 
+    for(var i=0;i<data.statuses.length;i++){
+      var timeArray = data.statuses[i].created_at.split(' ').slice(0,4);
+      var time = timeArray.join(' ');
+      var hashtags = [];
+      var tweet = data.statuses[i];
+      tweet.entities.hashtags.forEach(function(ele, i){
+          hashtags.push(ele.text);
+      });
+     %>
+    <tr class="pointer" id=<%=tweet.id_str %> >
+        <td><%= time %></td>
+        <td><%= "@"+ tweet.user.screen_name%></td>
+        <td><%= tweet.text %></td>
+        <td><%= hashtags.join(', ') %></td>
+        <%
+          if(tweet.coordinates){
+          var coord = `(${parseFloat(tweet.coordinates.coordinates[0]).toFixed(3)},${parseFloat(tweet.coordinates.coordinates[1]).toFixed(3)})`;
+        %>
+        <td><%= coord %></td>
+        <% }else{ %>
+        <td></td>
+        <% }%>
+        <td class="text-center"><%= tweet.favorite_count + "/" + tweet.retweet_count %></td>
+        <td><button class="btn btn-primary view-tweet" data-toggle="modal" data-target="#tweetModal">View</button></td>
+    </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<div class="row">
+  <div class="col-md-6">
+    <button type="button" class="save btn btn-primary btn-block" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading...">Save</button>
+  </div>
+  <div class="col-md-6">
+    <button type="button" id="next" class="btn btn-default btn-block" >Next</button>
+  </div>
+  
+</div>
+
